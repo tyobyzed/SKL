@@ -1,9 +1,9 @@
 // Fungsi untuk format tanggal Indonesia
 function formatTanggalIndo({ tanggal, bulan, tahun }) {
     const bulanIndo = [
-        '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-    ];
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+];
     return `${tanggal} ${bulanIndo[bulan]} ${tahun}`;
 }
 
