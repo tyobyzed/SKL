@@ -1,14 +1,32 @@
-// Fungsi untuk memvalidasi jam akses (hanya bisa diakses pada jam tertentu)
-function validJamAkses() {
+// Fungsi untuk validasi jam dan tanggal akses
+function validAkses() {
     const now = new Date();
     const jam = now.getHours(); // 0-23 format
-    return jam >= 15 && jam <= 23; // hanya boleh akses jam 15:00 - 23:00
+    const tanggal = now.getDate(); // 1-31 format
+    const bulan = now.getMonth() + 1; // 0-11 format, jadi +1
+    const tahun = now.getFullYear();
+
+    // Aturan jam akses
+    const jamValid = jam >= 15 && jam <= 23;
+
+    // Aturan tanggal akses
+    const tanggalMulai = { tanggal: 29, bulan: 4, tahun: 2025 }; // Contoh: 29 April 2025
+    const tanggalSelesai = { tanggal: 5, bulan: 5, tahun: 2025 }; // Contoh: 5 Mei 2025
+
+    const mulai = new Date(tanggalMulai.tahun, tanggalMulai.bulan - 1, tanggalMulai.tanggal);
+    const selesai = new Date(tanggalSelesai.tahun, tanggalSelesai.bulan - 1, tanggalSelesai.tanggal);
+
+    const today = new Date(tahun, bulan - 1, tanggal);
+
+    const tanggalValid = today >= mulai && today <= selesai;
+
+    return jamValid && tanggalValid;
 }
 
 // Load data dari Google Sheets melalui API
 async function cekKelulusan() {
-    if (!validJamAkses()) {
-        alert('Akses hanya diperbolehkan antara jam 15:00 dan 23:00');
+    if (!validAkses()) {
+        alert('Akses hanya diperbolehkan antara jam 15:00 - 23:00 dan tanggal 29 April 2025 sampai 5 Mei 2025.');
         return;
     }
 
@@ -22,7 +40,7 @@ async function cekKelulusan() {
 
     // URL API untuk mengambil data sebagai JSON
     const sheetId = '1ghbYznlzdwBWl1OEGLn6IB_tV7V60JnUITAdhoOtCeg';
-    const url = `https://opensheet.elk.sh/${sheetId}/Sheet1`; // Menggunakan opensheet.elk.sh untuk baca Sheet
+    const url = `https://opensheet.elk.sh/${sheetId}/Sheet1`;
 
     try {
         const response = await fetch(url);
@@ -46,7 +64,6 @@ async function cekKelulusan() {
                 document.getElementById('hasil').innerHTML = 'Maaf, Anda TIDAK LULUS.';
                 document.getElementById('downloadBtn').style.display = 'none';
             }
-            // Simpan data untuk PDF
             sessionStorage.setItem('siswaData', JSON.stringify(siswaData));
         } else {
             document.getElementById('hasil').innerHTML = 'Data tidak ditemukan.';
@@ -56,32 +73,4 @@ async function cekKelulusan() {
         console.error('Error fetching data:', error);
         alert('Gagal mengambil data. Pastikan koneksi internet Anda stabil.');
     }
-}
-
-// Membuat file PDF kelulusan
-function downloadPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    const siswaData = JSON.parse(sessionStorage.getItem('siswaData'));
-
-    doc.setFontSize(16);
-    doc.text('SURAT KETERANGAN KELULUSAN', 105, 20, null, null, 'center');
-    doc.setFontSize(12);
-    doc.text('Nomor Surat: 123/ABC/2025', 105, 30, null, null, 'center');
-
-    doc.setFontSize(12);
-    doc.text(`Nama: ${siswaData.Nama}`, 20, 50);
-    doc.text(`NISN: ${siswaData.NISN}`, 20, 60);
-    doc.text(`Kelas: ${siswaData.Kelas}`, 20, 70);
-    doc.text(`Keterangan: ${siswaData.Keterangan.toUpperCase()}`, 20, 80);
-
-    doc.text('Ditetapkan di: Nama Kota', 20, 100);
-    doc.text(`Pada tanggal: ${new Date().toLocaleDateString('id-ID')}`, 20, 110);
-
-    doc.text('Kepala Sekolah,', 150, 140);
-    doc.text('_________________', 145, 160);
-    doc.text('Nama Kepala Sekolah', 145, 170);
-
-    doc.save('Surat_Kelulusan.pdf');
 }
