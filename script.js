@@ -26,7 +26,7 @@ function validAkses() {
 // Load data dari Google Sheets melalui API
 async function cekKelulusan() {
     if (!validAkses()) {
-        alert('Akses hanya diperbolehkan antara jam 15:00 - 23:00 dan tanggal 29 April 2025 sampai 5 Mei 2025.');
+        alert('Akses hanya diperbolehkan antara jam 15:00 - 23:00 dan tanggal 5 Mei 2025.');
         return;
     }
 
