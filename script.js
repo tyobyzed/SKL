@@ -11,7 +11,7 @@ function validAkses() {
 
     // Aturan tanggal akses
     const tanggalMulai = { tanggal: 5, bulan: 5, tahun: 2025 }; // Contoh: 29 April 2025
-    const tanggalSelesai = { tanggal: 5, bulan: 5, tahun: 2025 }; // Contoh: 5 Mei 2025
+    const tanggalSelesai = { tanggal: 6, bulan: 5, tahun: 2025 }; // Contoh: 5 Mei 2025
 
     const mulai = new Date(tanggalMulai.tahun, tanggalMulai.bulan - 1, tanggalMulai.tanggal);
     const selesai = new Date(tanggalSelesai.tahun, tanggalSelesai.bulan - 1, tanggalSelesai.tanggal);
@@ -26,7 +26,7 @@ function validAkses() {
 // Load data dari Google Sheets melalui API
 async function cekKelulusan() {
     if (!validAkses()) {
-        alert('Akses hanya diperbolehkan antara jam 15:00 - 23:00 dan tanggal 5 Mei 2025.');
+        alert('Akses hanya diperbolehkan antara jam 15:00 - 23:00 dan tanggal 29 April 2025 sampai 5 Mei 2025.');
         return;
     }
 
