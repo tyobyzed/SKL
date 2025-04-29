@@ -1,10 +1,21 @@
 // Fungsi untuk format tanggal Indonesia
 function formatTanggalIndo({ tanggal, bulan, tahun }) {
     const bulanIndo = [
-    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-];
-    return `${tanggal} ${bulanIndo[bulan]} ${tahun}`;
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+
+    // Validasi angka bulan
+    if (bulan < 1 || bulan > 12) {
+        throw new Error(`Bulan tidak valid: ${bulan}. Harus antara 1 - 12.`);
+    }
+
+    // Validasi tanggal
+    if (tanggal < 1 || tanggal > 31) {
+        throw new Error(`Tanggal tidak valid: ${tanggal}. Harus antara 1 - 31.`);
+    }
+
+    return `${tanggal} ${bulanIndo[bulan - 1]} ${tahun}`;
 }
 
 // Fungsi untuk validasi jam dan tanggal akses
@@ -15,35 +26,27 @@ function validAkses() {
     const bulan = now.getMonth() + 1; // 0-11 format
     const tahun = now.getFullYear();
 
-    const jamValid = jam >= 15 && jam <= 23;
+    // Tanggal akses hanya 1 tanggal tertentu, misalnya 5 Mei 2025, jam 15:00
+    const tanggalAkses = { tanggal: 5, bulan: 5, tahun: 2025 };
+    const waktuAkses = new Date(tanggalAkses.tahun, tanggalAkses.bulan - 1, tanggalAkses.tanggal, 15, 0, 0); // jam 15.00
 
-    const tanggalMulai = { tanggal: 5, bulan: 5, tahun: 2025 };
-    const tanggalSelesai = { tanggal: 7, bulan: 5, tahun: 2025 };
-
-    const mulai = new Date(tanggalMulai.tahun, tanggalMulai.bulan - 1, tanggalMulai.tanggal);
-    const selesai = new Date(tanggalSelesai.tahun, tanggalSelesai.bulan - 1, tanggalSelesai.tanggal);
-
-    const today = new Date(tahun, bulan - 1, tanggal);
-
-    const tanggalValid = today >= mulai && today <= selesai;
+    // Cek apakah sekarang waktu yang valid untuk akses
+    const aksesValid = now >= waktuAkses;
 
     return {
-        jamValid,
-        tanggalValid,
-        tanggalMulai,
-        tanggalSelesai,
-        mulai
+        aksesValid,
+        tanggalAkses,
+        waktuAkses
     };
 }
 
-// Load data dari Google Sheets melalui API
+// Fungsi untuk cek kelulusan
 async function cekKelulusan() {
     const akses = validAkses();
 
-    if (!akses.jamValid || !akses.tanggalValid) {
-        const mulaiStr = formatTanggalIndo(akses.tanggalMulai);
-        const selesaiStr = formatTanggalIndo(akses.tanggalSelesai);
-        alert(`Akses hanya diperbolehkan antara jam 15:00 - 23:00 dan tanggal ${mulaiStr} sampai ${selesaiStr}.`);
+    if (!akses.aksesValid) {
+        const tanggalStr = formatTanggalIndo(akses.tanggalAkses);
+        alert(`Akses hanya diperbolehkan mulai jam 15:00 tanggal ${tanggalStr}.`);
         return;
     }
 
@@ -126,18 +129,17 @@ function setupCountdown() {
     const cekBtn = document.getElementById('cekBtn');
     const countdownDiv = document.getElementById('countdown');
 
-    if (now < akses.mulai) {
-        // Disable tombol cek
+    if (now < akses.waktuAkses) {
         cekBtn.disabled = true;
 
-        // Update countdown setiap detik
-        setInterval(() => {
+        const interval = setInterval(() => {
             const now = new Date();
-            const selisih = akses.mulai - now;
+            const selisih = akses.waktuAkses - now;
 
             if (selisih <= 0) {
                 countdownDiv.innerHTML = 'Akses sudah dibuka!';
                 cekBtn.disabled = false;
+                clearInterval(interval); // penting, agar tidak terus berjalan
                 return;
             }
 
@@ -149,7 +151,6 @@ function setupCountdown() {
             countdownDiv.innerHTML = `Akses dibuka dalam: ${days} hari, ${hours} jam, ${minutes} menit, ${seconds} detik.`;
         }, 1000);
     } else {
-        // Jika sudah buka, tombol aktif
         cekBtn.disabled = false;
         countdownDiv.innerHTML = '';
     }
