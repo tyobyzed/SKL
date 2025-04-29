@@ -1,17 +1,24 @@
+// Fungsi untuk format tanggal Indonesia
+function formatTanggalIndo({ tanggal, bulan, tahun }) {
+    const bulanIndo = [
+        '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    return `${tanggal} ${bulanIndo[bulan]} ${tahun}`;
+}
+
 // Fungsi untuk validasi jam dan tanggal akses
 function validAkses() {
     const now = new Date();
     const jam = now.getHours(); // 0-23 format
     const tanggal = now.getDate(); // 1-31 format
-    const bulan = now.getMonth() + 1; // 0-11 format, jadi +1
+    const bulan = now.getMonth() + 1; // 0-11 format
     const tahun = now.getFullYear();
 
-    // Aturan jam akses
     const jamValid = jam >= 15 && jam <= 23;
 
-    // Aturan tanggal akses
-    const tanggalMulai = { tanggal: 5, bulan: 5, tahun: 2025 }; // Contoh: 29 April 2025
-    const tanggalSelesai = { tanggal: 6, bulan: 5, tahun: 2025 }; // Contoh: 5 Mei 2025
+    const tanggalMulai = { tanggal: 29, bulan: 4, tahun: 2025 };
+    const tanggalSelesai = { tanggal: 5, bulan: 5, tahun: 2025 };
 
     const mulai = new Date(tanggalMulai.tahun, tanggalMulai.bulan - 1, tanggalMulai.tanggal);
     const selesai = new Date(tanggalSelesai.tahun, tanggalSelesai.bulan - 1, tanggalSelesai.tanggal);
@@ -20,13 +27,23 @@ function validAkses() {
 
     const tanggalValid = today >= mulai && today <= selesai;
 
-    return jamValid && tanggalValid;
+    return {
+        jamValid,
+        tanggalValid,
+        tanggalMulai,
+        tanggalSelesai,
+        mulai
+    };
 }
 
 // Load data dari Google Sheets melalui API
 async function cekKelulusan() {
-    if (!validAkses()) {
-        alert('Akses hanya diperbolehkan antara jam 15:00 - 23:00 dan tanggal 5 Mei 2025 sampai 6 Mei 2025.');
+    const akses = validAkses();
+
+    if (!akses.jamValid || !akses.tanggalValid) {
+        const mulaiStr = formatTanggalIndo(akses.tanggalMulai);
+        const selesaiStr = formatTanggalIndo(akses.tanggalSelesai);
+        alert(`Akses hanya diperbolehkan antara jam 15:00 - 23:00 dan tanggal ${mulaiStr} sampai ${selesaiStr}.`);
         return;
     }
 
@@ -38,7 +55,6 @@ async function cekKelulusan() {
         return;
     }
 
-    // URL API untuk mengambil data sebagai JSON
     const sheetId = '1ghbYznlzdwBWl1OEGLn6IB_tV7V60JnUITAdhoOtCeg';
     const url = `https://opensheet.elk.sh/${sheetId}/Sheet1`;
 
@@ -74,3 +90,70 @@ async function cekKelulusan() {
         alert('Gagal mengambil data. Pastikan koneksi internet Anda stabil.');
     }
 }
+
+// Membuat file PDF kelulusan
+function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const siswaData = JSON.parse(sessionStorage.getItem('siswaData'));
+
+    doc.setFontSize(16);
+    doc.text('SURAT KETERANGAN KELULUSAN', 105, 20, null, null, 'center');
+    doc.setFontSize(12);
+    doc.text('Nomor Surat: 123/ABC/2025', 105, 30, null, null, 'center');
+
+    doc.setFontSize(12);
+    doc.text(`Nama: ${siswaData.Nama}`, 20, 50);
+    doc.text(`NISN: ${siswaData.NISN}`, 20, 60);
+    doc.text(`Kelas: ${siswaData.Kelas}`, 20, 70);
+    doc.text(`Keterangan: ${siswaData.Keterangan.toUpperCase()}`, 20, 80);
+
+    doc.text('Ditetapkan di: Nama Kota', 20, 100);
+    doc.text(`Pada tanggal: ${new Date().toLocaleDateString('id-ID')}`, 20, 110);
+
+    doc.text('Kepala Sekolah,', 150, 140);
+    doc.text('_________________', 145, 160);
+    doc.text('Nama Kepala Sekolah', 145, 170);
+
+    doc.save('Surat_Kelulusan.pdf');
+}
+
+// FUNGSI COUNTDOWN dan DISABLE TOMBOL
+function setupCountdown() {
+    const akses = validAkses();
+    const now = new Date();
+    const cekBtn = document.getElementById('cekBtn');
+    const countdownDiv = document.getElementById('countdown');
+
+    if (now < akses.mulai) {
+        // Disable tombol cek
+        cekBtn.disabled = true;
+
+        // Update countdown setiap detik
+        setInterval(() => {
+            const now = new Date();
+            const selisih = akses.mulai - now;
+
+            if (selisih <= 0) {
+                countdownDiv.innerHTML = 'Akses sudah dibuka!';
+                cekBtn.disabled = false;
+                return;
+            }
+
+            const days = Math.floor(selisih / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((selisih % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((selisih % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((selisih % (1000 * 60)) / 1000);
+
+            countdownDiv.innerHTML = `Akses dibuka dalam: ${days} hari, ${hours} jam, ${minutes} menit, ${seconds} detik.`;
+        }, 1000);
+    } else {
+        // Jika sudah buka, tombol aktif
+        cekBtn.disabled = false;
+        countdownDiv.innerHTML = '';
+    }
+}
+
+// Jalankan setupCountdown saat halaman selesai loading
+window.onload = setupCountdown;
