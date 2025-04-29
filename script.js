@@ -1,5 +1,6 @@
 // Fungsi untuk validasi jam dan tanggal akses
 function validAkses() {
+    const now = new Date();
     const jam = now.getHours(); // 0-23 format
     const tanggal = now.getDate(); // 1-31 format
     const bulan = now.getMonth() + 1; // 0-11 format, jadi +1
@@ -25,7 +26,7 @@ function validAkses() {
 // Load data dari Google Sheets melalui API
 async function cekKelulusan() {
     if (!validAkses()) {
-        alert('Akses hanya diperbolehkan antara jam 15:00 - 23:00 dan tanggal 29 April 2025 sampai 5 Mei 2025.');
+        alert('Akses hanya diperbolehkan antara jam 15:00 - 23:00 dan tanggal 5 Mei 2025 sampai 6 Mei 2025.');
         return;
     }
 
