@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengumuman Kelulusan</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- jsPDF untuk generate surat PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <img src="logo-sekolah.png" alt="Logo Sekolah" class="logo">
+
+        <div class="form-box">
+            <h1>Pengumuman Kelulusan</h1>
+            <p>Silakan masukkan Nama dan NISN Anda</p>
+
+            <input type="text" id="nama" placeholder="Nama Lengkap" required>
+            <input type="text" id="nisn" placeholder="NISN" required>
+            <button onclick="cekKelulusan()">Cek Kelulusan</button>
+
+            <div id="hasil" class="hasil"></div>
+            <button id="downloadBtn" style="display:none;" onclick="downloadPDF()">Download Surat Kelulusan</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
