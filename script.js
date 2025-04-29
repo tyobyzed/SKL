@@ -10,7 +10,7 @@ function validAkses() {
     const jamValid = jam >= 15 && jam <= 23;
 
     // Aturan tanggal akses
-    const tanggalMulai = { tanggal: 5, bulan: 4, tahun: 2025 }; // Contoh: 29 April 2025
+    const tanggalMulai = { tanggal: 5, bulan: 5, tahun: 2025 }; // Contoh: 29 April 2025
     const tanggalSelesai = { tanggal: 5, bulan: 5, tahun: 2025 }; // Contoh: 5 Mei 2025
 
     const mulai = new Date(tanggalMulai.tahun, tanggalMulai.bulan - 1, tanggalMulai.tanggal);
