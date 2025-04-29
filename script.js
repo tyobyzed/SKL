@@ -1,6 +1,5 @@
 // Fungsi untuk validasi jam dan tanggal akses
 function validAkses() {
-    const now = new Date();
     const jam = now.getHours(); // 0-23 format
     const tanggal = now.getDate(); // 1-31 format
     const bulan = now.getMonth() + 1; // 0-11 format, jadi +1
