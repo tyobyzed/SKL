@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pengumuman Kelulusan 2025</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-image: url('background.jpg'); /* Ganti dengan path gambar background */
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .logo {
+      width: 150px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 80%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 12px 20px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .hasil {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+      text-align: left;
+    }
+
+    .status {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .status.lulus {
+      color: #fff;
+      background-color: #28a745; /* Green */
+    }
+
+    .status.tidaklulus {
+      color: #fff;
+      background-color: #dc3545; /* Red */
+    }
+
+    .data-siswa {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f1f1f1;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+
+    .data-siswa p {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .data-siswa strong {
+      font-weight: 600;
+    }
+
+    .keterangan {
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 20px;
+      color: #333;
+      font-size: 26px;
+    }
+
+    .keterangan.tidaklulus {
+      color: #dc3545;
+    }
+
+    .keterangan.lulus {
+      color: #28a745;
+    }
+
+    /* Style tambahan untuk memastikan kalimat tengah secara vertikal dan horizontal */
+    .centered-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      color: #ffffff;
+      padding: 20px;
+      background-color: rgba(0, 123, 255, 0.8); /* Blue background */
+      border-radius: 10px;
+      width: 80%;
+      max-width: 500px;
+      display: none;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <img src="logo-sekolah.png" alt="Logo Sekolah" class="logo" />
+
+    <div class="form-box">
+      <h1>Pengumuman Kelulusan 2025</h1>
+      <p>Silakan masukkan NISN Anda untuk memeriksa status kelulusan.</p>
+
+      <input type="text" id="nisn" placeholder="Masukkan NISN Anda" required />
+      <button onclick="cekKelulusan()">Cek Kelulusan</button>
+
+      <div id="hasil" class="hasil"></div>
+    </div>
+  </div>
+
+  <div id="centeredMessage" class="centered-message"></div>
+
+  <script>
+    function validAkses() {
+      const now = new Date();
+      const jam = now.getHours();
+      const tanggal = now.getDate();
+      const bulan = now.getMonth() + 1;
+      const tahun = now.getFullYear();
+
+      // Hanya izinkan pada 3 Mei 2025 mulai pukul 10:00
+      return tanggal === 3 && bulan === 5 && tahun === 2025 && jam >= 10;
+    }
+
+    async function cekKelulusan() {
+      if (!validAkses()) {
+        alert('Akses hanya diperbolehkan pada tanggal 3 Mei 2025 mulai pukul 10:00.');
+        return;
+      }
+
+      const nisn = document.getElementById('nisn').value.trim();
+      if (nisn === '') {
+        alert('NISN harus diisi!');
+        return;
+      }
+
+      const sheetId = '1ghbYznlzdwBWl1OEGLn6IB_tV7V60JnUITAdhoOtCeg';
+      const url = `https://opensheet.elk.sh/${sheetId}/Sheet1`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const siswaData = data.find(item => item.NISN === nisn);
+        const centeredMessageDiv = document.getElementById('centeredMessage');
+        centeredMessageDiv.style.display = 'none'; // Hiding any previously displayed message
+
+        const hasilDiv = document.getElementById('hasil');
+        hasilDiv.innerHTML = ''; // Reset the previous results
+
+        if (siswaData) {
+          const statusMessage = siswaData.Keterangan.toLowerCase() === 'lulus' ? 
+            'Selamat, Anda dinyatakan lulus' : 'Maaf, Anda dinyatakan tidak lulus';
+          
+          const statusClass = siswaData.Keterangan.toLowerCase() === 'lulus' ? 'lulus' : 'tidaklulus';
+
+          // Menampilkan pesan status kelulusan di tengah halaman
+          centeredMessageDiv.style.display = 'block';
+          centeredMessageDiv.className = `centered-message ${statusClass}`;
+          centeredMessageDiv.innerHTML = statusMessage;
+
+          // Menampilkan data siswa
+          hasilDiv.innerHTML = `
+            <div class="data-siswa">
+              <p><strong>Nama:</strong> ${siswaData.Nama}</p>
+              <p><strong>NISN:</strong> ${siswaData.NISN}</p>
+              <p><strong>Keterangan:</strong> ${siswaData.Keterangan.toUpperCase()}</p>
+            </div>
+          `;
+        } else {
+          centeredMessageDiv.style.display = 'none'; // If data not found, hide the message
+          alert('Data tidak ditemukan. Pastikan NISN yang dimasukkan benar.');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        alert('Gagal mengambil data. Pastikan koneksi internet Anda stabil.');
+      }
+    }
+  </script>
+
+</body>
+</html>
