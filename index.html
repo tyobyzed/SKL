@@ -1,86 +1,34 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengumuman Kelulusan 2025</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pengumuman Kelulusan 2025</title>
+  <link rel="stylesheet" href="style.css"/>
 
-    <!-- jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
-    <!-- Google Charts (Visualization API) -->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
 </head>
 <body>
+  <div class="container">
+    <img src="assets/logo-sekolah.png" alt="Logo Sekolah" class="logo" />
 
-    <div class="container">
-        <img src="logo-sekolah.png" alt="Logo Sekolah" class="logo">
+    <div class="form-box">
+      <h1>Pengumuman Kelulusan 2025</h1>
+      <p>Silakan masukkan NISN Anda</p>
 
-        <div class="form-box">
-            <h1>Pengumuman Kelulusan 2025</h1>
-            <p>Silakan masukkan NISN Anda</p>
+      <input type="text" id="nisn" placeholder="NISN" required />
+      <button onclick="cekKelulusan()">Cek Kelulusan</button>
 
-            <input type="text" id="nisn" placeholder="NISN" required>
-            <button onclick="cekKelulusan()">Cek Kelulusan</button>
-
-            <div id="hasil" class="hasil"></div>
-            <button id="downloadBtn" style="display:none;" onclick="downloadPDF()">Download Surat Kelulusan</button>
-        </div>
+      <div id="hasil" class="hasil"></div>
+      <button id="downloadBtn" style="display:none;" onclick="downloadPDF()">Download Surat Kelulusan</button>
     </div>
+  </div>
 
-    <script>
-        let dataKelulusan = [];
-
-        // Load Google Sheets data
-        google.charts.load('current', { packages: ['corechart'] });
-        google.charts.setOnLoadCallback(loadDataFromSheets);
-
-        function loadDataFromSheets() {
-            const queryString = encodeURIComponent("SELECT A, B, C");
-            const sheetID = "1ghbYznlzdwBWl1OEGLn6IB_tV7V60JnUITAdhoOtCeg";
-            const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?sheet=Sheet1&tq=${queryString}`;
-
-            const query = new google.visualization.Query(url);
-            query.send(function(response) {
-                if (response.isError()) {
-                    console.error('Error loading data: ' + response.getMessage());
-                    return;
-                }
-                const data = response.getDataTable();
-                dataKelulusan = [];
-                for (let i = 0; i < data.getNumberOfRows(); i++) {
-                    dataKelulusan.push({
-                        nisn: data.getValue(i, 0),
-                        nama: data.getValue(i, 1),
-                        status: data.getValue(i, 2)
-                    });
-                }
-            });
-        }
-
-        function cekKelulusan() {
-            const nisnInput = document.getElementById("nisn").value.trim();
-            const hasilDiv = document.getElementById("hasil");
-            const downloadBtn = document.getElementById("downloadBtn");
-
-            if (dataKelulusan.length === 0) {
-                hasilDiv.innerHTML = `<p style="color:red;">Data belum siap. Silakan tunggu beberapa saat.</p>`;
-                return;
-            }
-
-            const siswa = dataKelulusan.find(s => s.nisn === nisnInput);
-
-            if (siswa) {
-                hasilDiv.innerHTML = `<h2>Selamat ${siswa.nama}</h2><p>Status: <strong>${siswa.status}</strong></p>`;
-                if (siswa.status.toUpperCase() === "LULUS") {
-                    downloadBtn.style.display = "inline-block";
-                } else {
-                    downloadBtn.style.display = "none";
-                }
-            } else {
-                hasilDiv.innerHTML = `<p style="color:red;">NISN tidak ditemukan.</p>`;
-                downloadBtn.style.display = "none";
+  <!-- JavaScript Anda -->
+  <script src="script.js"></script>
+</body>
+</html>
