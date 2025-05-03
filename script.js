@@ -19,8 +19,8 @@ function formatTanggalIndo({ tanggal, bulan, tahun }) {
 // Fungsi validasi akses waktu
 function validAkses() {
     const now = new Date();
-    const tanggalAkses = { tanggal: 5, bulan: 5, tahun: 2025 };
-    const waktuAkses = new Date(tanggalAkses.tahun, tanggalAkses.bulan - 1, tanggalAkses.tanggal, 15, 0, 0);
+    const tanggalAkses = { tanggal: 3, bulan: 5, tahun: 2025 };
+    const waktuAkses = new Date(tanggalAkses.tahun, tanggalAkses.bulan - 1, tanggalAkses.tanggal, 10, 0, 0);
     const aksesValid = now >= waktuAkses;
 
     return {
