@@ -5,12 +5,10 @@ function formatTanggalIndo({ tanggal, bulan, tahun }) {
         'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
     ];
 
-    // Validasi angka bulan
     if (bulan < 1 || bulan > 12) {
         throw new Error(`Bulan tidak valid: ${bulan}. Harus antara 1 - 12.`);
     }
 
-    // Validasi tanggal
     if (tanggal < 1 || tanggal > 31) {
         throw new Error(`Tanggal tidak valid: ${tanggal}. Harus antara 1 - 31.`);
     }
@@ -18,19 +16,11 @@ function formatTanggalIndo({ tanggal, bulan, tahun }) {
     return `${tanggal} ${bulanIndo[bulan - 1]} ${tahun}`;
 }
 
-// Fungsi untuk validasi jam dan tanggal akses
+// Fungsi validasi akses waktu
 function validAkses() {
     const now = new Date();
-    const jam = now.getHours(); // 0-23 format
-    const tanggal = now.getDate(); // 1-31 format
-    const bulan = now.getMonth() + 1; // 0-11 format
-    const tahun = now.getFullYear();
-
-    // Tanggal akses hanya 1 tanggal tertentu, misalnya 5 Mei 2025, jam 15:00
     const tanggalAkses = { tanggal: 5, bulan: 5, tahun: 2025 };
-    const waktuAkses = new Date(tanggalAkses.tahun, tanggalAkses.bulan - 1, tanggalAkses.tanggal, 15, 0, 0); // jam 15.00
-
-    // Cek apakah sekarang waktu yang valid untuk akses
+    const waktuAkses = new Date(tanggalAkses.tahun, tanggalAkses.bulan - 1, tanggalAkses.tanggal, 15, 0, 0);
     const aksesValid = now >= waktuAkses;
 
     return {
@@ -40,7 +30,7 @@ function validAkses() {
     };
 }
 
-// Fungsi untuk cek kelulusan
+// Cek kelulusan hanya berdasarkan NISN
 async function cekKelulusan() {
     const akses = validAkses();
 
@@ -50,11 +40,9 @@ async function cekKelulusan() {
         return;
     }
 
-    const nama = document.getElementById('nama').value.trim();
     const nisn = document.getElementById('nisn').value.trim();
-
-    if (nama === '' || nisn === '') {
-        alert('Nama dan NISN harus diisi!');
+    if (nisn === '') {
+        alert('NISN harus diisi!');
         return;
     }
 
@@ -69,7 +57,7 @@ async function cekKelulusan() {
         let siswaData = {};
 
         data.forEach(item => {
-            if (item.Nama?.toLowerCase() === nama.toLowerCase() && item.NISN === nisn) {
+            if (item.NISN === nisn) {
                 ditemukan = true;
                 siswaData = item;
             }
@@ -94,11 +82,10 @@ async function cekKelulusan() {
     }
 }
 
-// Membuat file PDF kelulusan
+// Generate PDF surat kelulusan
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-
     const siswaData = JSON.parse(sessionStorage.getItem('siswaData'));
 
     doc.setFontSize(16);
@@ -106,7 +93,6 @@ function downloadPDF() {
     doc.setFontSize(12);
     doc.text('Nomor Surat: 123/ABC/2025', 105, 30, null, null, 'center');
 
-    doc.setFontSize(12);
     doc.text(`Nama: ${siswaData.Nama}`, 20, 50);
     doc.text(`NISN: ${siswaData.NISN}`, 20, 60);
     doc.text(`Kelas: ${siswaData.Kelas}`, 20, 70);
@@ -122,7 +108,7 @@ function downloadPDF() {
     doc.save('Surat_Kelulusan.pdf');
 }
 
-// FUNGSI COUNTDOWN dan DISABLE TOMBOL
+// Countdown & penguncian tombol
 function setupCountdown() {
     const akses = validAkses();
     const now = new Date();
@@ -139,7 +125,7 @@ function setupCountdown() {
             if (selisih <= 0) {
                 countdownDiv.innerHTML = 'Akses sudah dibuka!';
                 cekBtn.disabled = false;
-                clearInterval(interval); // penting, agar tidak terus berjalan
+                clearInterval(interval);
                 return;
             }
 
@@ -156,5 +142,4 @@ function setupCountdown() {
     }
 }
 
-// Jalankan setupCountdown saat halaman selesai loading
 window.onload = setupCountdown;
