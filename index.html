@@ -11,6 +11,9 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Google Visualization API -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
 
@@ -30,11 +33,35 @@
     </div>
 
     <script>
-        // Data kelulusan (contoh statis, bisa diganti dengan pengambilan data dari Google Sheets)
-        const dataKelulusan = [
-            { nisn: "1234567890", nama: "Andi Wijaya", status: "LULUS" },
-            { nisn: "0987654321", nama: "Budi Santoso", status: "TIDAK LULUS" }
-        ];
+        // Inisialisasi data kelulusan dari Google Sheets
+        let dataKelulusan = [];
+
+        // Muat data dari Google Sheets menggunakan Google Visualization API
+        google.charts.load('current', {
+            packages: ['table']
+        });
+        
+        google.charts.setOnLoadCallback(loadDataFromSheets);
+
+        function loadDataFromSheets() {
+            const queryString = "SELECT A, B, C";  // Sesuaikan dengan kolom data NISN, Nama, dan Status kelulusan
+            const spreadsheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTAlsCAkwkm5_WQ1UrtOUUCh0q4rthSZjtRlzM5MLYj-lccy_vGsgM9aTk8e0NPLRCEdjMv646h5NGh/pubhtml?gid=0&single=true";
+
+            const query = new google.visualization.Query(spreadsheetUrl);
+            query.setQuery(queryString);
+
+            query.send(function(response) {
+                const data = response.getDataTable();
+                dataKelulusan = [];
+                for (let i = 0; i < data.getNumberOfRows(); i++) {
+                    dataKelulusan.push({
+                        nisn: data.getValue(i, 0),
+                        nama: data.getValue(i, 1),
+                        status: data.getValue(i, 2)
+                    });
+                }
+            });
+        }
 
         function cekKelulusan() {
             const nisnInput = document.getElementById("nisn").value.trim();
