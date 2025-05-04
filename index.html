@@ -186,13 +186,13 @@
       const bulan = now.getMonth() + 1;
       const tahun = now.getFullYear();
 
-      // Hanya izinkan pada 3 Mei 2025 mulai pukul 10:00
-      return tanggal === 3 && bulan === 5 && tahun === 2025 && jam >= 10;
+      // Hanya izinkan pada 4 Mei 2025 mulai pukul 10:00
+      return tanggal === 4 && bulan === 5 && tahun === 2025 && jam >= 10;
     }
 
     async function cekKelulusan() {
       if (!validAkses()) {
-        alert('Akses hanya diperbolehkan pada tanggal 3 Mei 2025 mulai pukul 10:00.');
+        alert('Akses hanya diperbolehkan pada tanggal 4 Mei 2025 mulai pukul 10:00.');
         return;
       }
 
