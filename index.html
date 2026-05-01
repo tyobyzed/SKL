@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pengumuman Kelulusan 2025</title>
+  <title>Pengumuman Kelulusan 2026</title>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
@@ -166,7 +166,7 @@
     <img src="logo-sekolah.png" alt="Logo Sekolah" class="logo" />
 
     <div class="form-box">
-      <h1>Pengumuman Kelulusan 2025</h1>
+      <h1>Pengumuman Kelulusan 2026</h1>
       <p>Silakan masukkan NISN Anda untuk memeriksa status kelulusan.</p>
 
       <input type="text" id="nisn" placeholder="Masukkan NISN Anda" required />
@@ -186,13 +186,13 @@
       const bulan = now.getMonth() + 1;
       const tahun = now.getFullYear();
 
-      // Hanya izinkan pada 5 Mei 2025 mulai pukul 15:00
-      return tanggal === 5 && bulan === 5 && tahun === 2025 && jam >= 15;
+      // Hanya izinkan pada 5 Mei 2026 mulai pukul 15:00
+      return tanggal === 4 && bulan === 5 && tahun === 2026 && jam >= 15;
     }
 
     async function cekKelulusan() {
       if (!validAkses()) {
-        alert('Akses hanya diperbolehkan pada tanggal 5 Mei 2025 mulai pukul 15:00.');
+        alert('Akses hanya diperbolehkan pada tanggal 4 Mei 2026 mulai pukul 15:00.');
         return;
       }
 
